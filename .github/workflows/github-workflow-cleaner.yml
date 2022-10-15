@@ -1,0 +1,33 @@
+name: Workflow Run Remover
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+  GITHUB_REPOSITORY: ${{ secrets.GITHUB_REPOSITORY }}
+on:
+  workflow_call:
+    secrets:
+      GITHUB_REPOSITORY:
+        required: true
+      GH_TOKEN:
+        required: true
+
+jobs:
+  tg-upload:
+    name: RM Workflows
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cleanup
+        run: |
+          workflow_ids=($(gh api repos/"$GITHUB_REPOSITORY"/actions/workflows | jq '.workflows[] | .id'))
+          for workflow_id in "${workflow_ids[@]}"
+          do
+            echo "Listing runs for the workflow ID $workflow_id"
+            run_ids=($(gh api repos/"$GITHUB_REPOSITORY"/actions/workflows/"$workflow_id"/runs --paginate | jq '.workflow_runs[].id'))
+            for run_id in "${run_ids[@]}"
+            do
+              echo "Deleting Run ID $run_id"
+              gh api repos/"$GITHUB_REPOSITORY"/actions/runs/"$run_id" -X DELETE >/dev/null
+            done
+          done
+          
