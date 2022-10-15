@@ -11,7 +11,6 @@ on:
         required: true
       TELEGRAM_CHAT_ID:
         required: true
-    inputs:
       STICKER_ID:
         required: true
       CHANGELOG_GITHUB_REPOSITORY:
@@ -30,5 +29,5 @@ jobs:
           API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
           BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          STICKER_ID: ${{ inputs.STICKER_ID }}
-          CHANGELOG_GITHUB_REPOSITORY: ${{ inputs.CHANGELOG_GITHUB_REPOSITORY }}
+          STICKER_ID: ${{ secrets.STICKER_ID }}
+          CHANGELOG_GITHUB_REPOSITORY: ${{ secrets.CHANGELOG_GITHUB_REPOSITORY }}

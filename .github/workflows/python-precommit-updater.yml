@@ -9,9 +9,11 @@ on:
       CACHE_DEPENDENCY_PATH:
         required: false
         default: requirements.txt
+        type: string
       PYTHON_VERSION:
         required: false
         default: '3.x'
+        type: string
 
 permissions:
   contents: read

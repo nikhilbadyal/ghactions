@@ -10,9 +10,11 @@ on:
     inputs:
       FILES:
         required: true
+        type: string
       REQUEST_RATE:
         required: false
         default: 4
+        type: number
 
 jobs:
   virustotal:
