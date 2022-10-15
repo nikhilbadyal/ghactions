@@ -1,0 +1,48 @@
+name: Pre-commit updater
+
+on:
+  workflow_call:
+    secrets:
+      GH_TOKEN:
+        required: true
+    inputs:
+      CACHE_DEPENDENCY_PATH:
+        required: false
+        default: requirements.txt
+      PYTHON_VERSION:
+        required: false
+        default: '3.x'
+
+permissions:
+  contents: read
+
+jobs:
+  auto-update:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.1.0
+
+      - name: Setup Python
+        uses: actions/setup-python@v4.3.0
+        with:
+          python-version: ${{ inputs.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: ${{ inputs.CACHE_DEPENDENCY_PATH }}
+
+      - name: Install pre-commit
+        run: pip install pre-commit
+
+      - name: Updated Hooks
+        run: pre-commit autoupdate
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4.1.3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          branch: update/pre-commit-autoupdate
+          title: ⬆️Update pre-commit hooks
+          commit-message: ⬆️updated pre-commit hooks
+          body: ✨Update versions of tools in pre-commit configs to latest version
+          labels: pre-commit✨
