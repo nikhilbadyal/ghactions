@@ -23,7 +23,7 @@ jobs:
           for workflow_id in "${workflow_ids[@]}"
           do
             echo "Listing runs for the workflow ID $workflow_id"
-            run_ids=($(gh api repos/"$GITHUB_REPOSITORY"/actions/workflows/"$workflow_id"/runs --paginate | jq '.workflow_runs[].id'))
+            run_ids=($(gh api repos/"$GITHUB_REPOSITORY"/actions/workflows/"$workflow_id"/runs?status=completed --paginate | jq '.workflow_runs[].id'))
             for run_id in "${run_ids[@]}"
             do
               echo "Deleting Run ID $run_id"
