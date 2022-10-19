@@ -15,6 +15,10 @@ on:
         required: true
       CHANGELOG_GITHUB_REPOSITORY:
         required: false
+      DOWNLOAD_GITHUB_REPOSITORY:
+        required: false
+      ASSETS_PATTERN:
+        required: false
 
 jobs:
   tg-upload:
@@ -31,3 +35,5 @@ jobs:
           CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           STICKER_ID: ${{ secrets.STICKER_ID }}
           CHANGELOG_GITHUB_REPOSITORY: ${{ secrets.CHANGELOG_GITHUB_REPOSITORY }}
+          DOWNLOAD_GITHUB_REPOSITORY: ${{ secrets.DOWNLOAD_GITHUB_REPOSITORY }}
+          ASSETS_PATTERN: ${{ secrets.ASSETS_PATTERN }}
