@@ -19,6 +19,12 @@ on:
         required: false
       ASSETS_PATTERN:
         required: false
+      SEND_MESSAGE:
+        required: false
+      SEND_STICKER:
+        required: false
+      MESSAGE:
+        required: false
 
 jobs:
   tg-upload:
@@ -37,3 +43,6 @@ jobs:
           CHANGELOG_GITHUB_REPOSITORY: ${{ secrets.CHANGELOG_GITHUB_REPOSITORY }}
           DOWNLOAD_GITHUB_REPOSITORY: ${{ secrets.DOWNLOAD_GITHUB_REPOSITORY }}
           ASSETS_PATTERN: ${{ secrets.ASSETS_PATTERN }}
+          SEND_MESSAGE: ${{ secrets.SEND_MESSAGE }}
+          SEND_STICKER: ${{ secrets.SEND_STICKER }}
+          MESSAGE: ${{ secrets.MESSAGE }}
