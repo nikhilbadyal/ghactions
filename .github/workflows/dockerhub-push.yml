@@ -14,7 +14,7 @@ on:
         type: string
       PLATFORMS:
         required: false
-        default: linux/amd64,linux/arm64,linux/arm64/v8,windows/amd64
+        default: linux/amd64,linux/arm64,linux/arm64/v8
         type: string
       FILE:
         required: false
