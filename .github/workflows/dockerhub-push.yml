@@ -16,6 +16,9 @@ on:
         required: false
         default: linux/amd64,linux/arm64,linux/arm64/v8,windows/amd64
         type: string
+      FILE:
+        required: false
+        type: string
 
 jobs:
   docker:
@@ -38,6 +41,7 @@ jobs:
           push: true
           platforms: ${{ inputs.PLATFORMS }}
           tags: ${{ inputs.IMAGE_TAG }}
+          file: ${{ inputs.FILE }}
       - name: Update repo description
         uses: peter-evans/dockerhub-description@v3.4.2
         with:
