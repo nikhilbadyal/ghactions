@@ -16,15 +16,11 @@ on:
         type: string
 jobs:
   release-cleanup:
-    name: GitHub Cleanup
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    steps:
-      - name: Delete Older Releases
-        uses: nikhilbadyal/ghaction-rm-releases@v0.0.5
-        with:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          RELEASE_PATTERN: ${{ inputs.RELEASE_CLEANUP_PATTERN }}
+    uses: ./.github/workflows/release-tag-cleanup.yml
+    with:
+      RELEASE_PATTERN: ${{ inputs.RELEASE_CLEANUP_PATTERN }}
+    secrets:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
   workflow-cleanup:
     uses: ./.github/workflows/github-workflow-cleaner.yml
     secrets:

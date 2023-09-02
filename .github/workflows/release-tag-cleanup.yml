@@ -1,0 +1,23 @@
+name: GitHub Cleanup
+
+on:
+  workflow_call:
+    secrets:
+      GH_TOKEN:
+        required: true
+    inputs:
+      RELEASE_CLEANUP_PATTERN:
+        required: false
+        default: '[\s\S]*'
+        type: string
+jobs:
+  release-cleanup:
+    name: GitHub Cleanup
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete Older Releases
+        uses: nikhilbadyal/ghaction-rm-releases@v0.0.5
+        with:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          RELEASE_PATTERN: ${{ inputs.RELEASE_CLEANUP_PATTERN }}
