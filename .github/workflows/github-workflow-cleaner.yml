@@ -1,4 +1,4 @@
-name: Workflow Run Remover
+name: GitHub workflow cleaner
 
 env:
   GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -14,7 +14,7 @@ on:
 jobs:
   tg-upload:
     name: RM Workflows
-    timeout-minutes: 10
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
       - name: Cleanup

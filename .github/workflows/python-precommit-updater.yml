@@ -1,4 +1,4 @@
-name: Pre-commit updater
+name: Python Pre-commit updater
 
 on:
   workflow_call:
@@ -20,7 +20,7 @@ permissions:
 
 jobs:
   auto-update:
-    timeout-minutes: 5
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

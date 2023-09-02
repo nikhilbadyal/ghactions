@@ -1,4 +1,4 @@
-name: GitHub Cleanup
+name: GitHub Release & Tag Cleaner
 
 on:
   workflow_call:
@@ -13,7 +13,7 @@ on:
 jobs:
   release-cleanup:
     name: GitHub Cleanup
-    timeout-minutes: 5
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
       - name: Delete Older Releases

@@ -1,4 +1,4 @@
-name: Telegram GitHub Upload
+name: Telegram Uploader (GitHub releases)
 
 on:
   workflow_call:
@@ -29,7 +29,7 @@ on:
 jobs:
   tg-upload:
     name: Telegram Upload
-    timeout-minutes: 5
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
       - name: Upload to Telegram

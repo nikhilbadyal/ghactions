@@ -1,4 +1,4 @@
-name: Push to Docker Hub
+name: Docker Hub Push
 
 on:
   workflow_call:
