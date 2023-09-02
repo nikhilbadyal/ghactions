@@ -20,6 +20,7 @@ jobs:
       - name: Cleanup
         run: |
           workflow_ids=($(gh api repos/"$GITHUB_REPOSITORY"/actions/workflows | jq '.workflows[] | .id'))
+          echo "Cleaning up  $GITHUB_REPOSITORY"
           for workflow_id in "${workflow_ids[@]}"
           do
             echo "Listing runs for the workflow ID $workflow_id"
