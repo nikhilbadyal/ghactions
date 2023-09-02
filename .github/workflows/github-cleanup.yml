@@ -16,9 +16,9 @@ on:
         type: string
 jobs:
   release-cleanup:
-    uses: ./.github/workflows/release-tag-cleanup.yml
+    uses: ./.github/workflows/github-release-tag-cleaner.yml
     with:
-      RELEASE_PATTERN: ${{ inputs.RELEASE_CLEANUP_PATTERN }}
+      RELEASE_CLEANUP_PATTERN: ${{ inputs.RELEASE_CLEANUP_PATTERN }}
     secrets:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
   workflow-cleanup:
