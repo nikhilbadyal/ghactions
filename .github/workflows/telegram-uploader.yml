@@ -11,7 +11,7 @@ on:
         required: true
       TELEGRAM_CHAT_ID:
         required: true
-      STICKER_ID:
+      TELEGRAM_STICKER_ID:
         required: true
       CHANGELOG_GITHUB_REPOSITORY:
         required: false
@@ -39,7 +39,7 @@ jobs:
           API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
           BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          STICKER_ID: ${{ secrets.STICKER_ID }}
+          STICKER_ID: ${{ secrets.TELEGRAM_STICKER_ID }}
           CHANGELOG_GITHUB_REPOSITORY: ${{ secrets.CHANGELOG_GITHUB_REPOSITORY }}
           DOWNLOAD_GITHUB_REPOSITORY: ${{ secrets.DOWNLOAD_GITHUB_REPOSITORY }}
           ASSETS_PATTERN: ${{ secrets.ASSETS_PATTERN }}
