@@ -12,7 +12,7 @@ on:
       TELEGRAM_CHAT_ID:
         required: true
       TELEGRAM_STICKER_ID:
-        required: true
+        required: false
       CHANGELOG_GITHUB_REPOSITORY:
         required: false
       DOWNLOAD_GITHUB_REPOSITORY:
