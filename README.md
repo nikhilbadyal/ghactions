@@ -80,9 +80,9 @@ Common GitHub action which I use commonly.
 | `TELEGRAM_BOT_TOKEN`          | string          | -                                                            | secrets    | ✅          | Bot Token from [Telegram][BOT-TOKEN]               |
 | `TELEGRAM_CHAT_ID`            | number          | -                                                            | secrets    | ✅          | CHAT ID from [Telegram][CHAT-ID]                   |
 | `TELEGRAM_STICKER_ID`         | string          | -                                                            | secrets    | ❎          | Projects default sticker.                          |
-| `CHANGELOG_GITHUB_REPOSITORY` | string          | Your own repo                                                | secrets    | ❎          | GitHub Repo for changelog URL.                     |
-| `DOWNLOAD_GITHUB_REPOSITORY`  | string          | Your own repo                                                | secrets    | ❎          | GitHub Repo to download assets for upload.         |
-| `ASSETS_PATTERN`              | string          | .* (Upload everything)                                       | secrets    | ❎          | Regex pattern for GitHub assets                    |
+| `CHANGELOG_GITHUB_REPOSITORY` | string          | ${{ github.repository }}                                     | secrets    | ❎          | GitHub Repo for changelog URL.                     |
+| `DOWNLOAD_GITHUB_REPOSITORY`  | string          | ${{ github.repository }}                                     | secrets    | ❎          | GitHub Repo to download assets for upload.         |
+| `ASSETS_PATTERN`              | string          | .*                                                           | secrets    | ❎          | Regex pattern for GitHub assets.Upload everything  |
 | `SEND_MESSAGE`                | boolean         | True                                                         | secrets    | ❎          | Whether to send message before uploading assets    |
 | `SEND_STICKER`                | boolean         | False                                                        | secrets    | ❎          | Whether to send sticker before uploading assets    |
 | `MESSAGE`                     | string          | New Release(s)🥳 See Changelog `CHANGELOG_GITHUB_REPOSITORY` | secrets    | ❎          | Message which will be sent before uploading assets |
