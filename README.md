@@ -21,11 +21,11 @@ Common GitHub action which I use commonly.
 
 <details><summary>Github Cleaner(Tags/Releases/Workflows) (github-cleanup.yml)</summary>
 
-| Name                      | Input Data Type | Default           | Input Type | Mandatory? | Description                                                |
-|---------------------------|-----------------|-------------------|------------|------------|------------------------------------------------------------|
-| `GH_TOKEN`                | string          | -                 | secrets    | ✅          | [Github Token][GH-TOKEN]                                   |
-| `GITHUB_REPOSITORY`       | string          | Your Current Repo | inputs     | ❎          | Github Repo to cleanup workflow runs                       |
-| `RELEASE_CLEANUP_PATTERN` | string          | [\s\S]*           | inputs     | ❎          | Release patterns to delete. (Remove everything by default) |
+| Name                      | Input Data Type | Default                  | Input Type | Mandatory? | Description                                                |
+|---------------------------|-----------------|--------------------------|------------|------------|------------------------------------------------------------|
+| `GH_TOKEN`                | string          | -                        | secrets    | ✅          | [Github Token][GH-TOKEN]                                   |
+| `GITHUB_REPOSITORY`       | string          | ${{ github.repository }} | inputs     | ❎          | Github Repo to cleanup workflow runs                       |
+| `RELEASE_CLEANUP_PATTERN` | string          | [\s\S]*                  | inputs     | ❎          | Release patterns to delete. (Remove everything by default) |
 
 </details>
 
