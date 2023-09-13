@@ -6,13 +6,13 @@ Common GitHub action which I use commonly.
 
 <details><summary>DockerHub Bumper (dockerhub-push.yml)</summary>
 
-| Name                 | Input Data Type | Default                 | Input Type | Mandatory? | Description                          |
-|----------------------|-----------------|-------------------------|------------|------------|--------------------------------------|
-| `DOCKERHUB_USERNAME` | string          | -                       | secrets    | ✅          | Dockerhub Username                   |
-| `DOCKERHUB_TOKEN`    | string          | -                       | secrets    | ✅          | Dockerhub Password/Token             |
-| `IMAGE_TAG`          | string          | linux/amd64,linux/arm64 | inputs     | ❎          | Tage for image                       |
-| `PLATFORMS`          | string          | <YourRepoName>:latest   | inputs     | ❎          | Platforms to build for               |
-| `FILE`               | string          | DockerFile              | inputs     | ❎          | DockerFile to use for building image |
+| Name                 | Input Data Type | Default                                | Input Type | Mandatory? | Description                          |
+|----------------------|-----------------|----------------------------------------|------------|------------|--------------------------------------|
+| `DOCKERHUB_USERNAME` | string          | -                                      | secrets    | ✅          | Dockerhub Username                   |
+| `DOCKERHUB_TOKEN`    | string          | -                                      | secrets    | ✅          | Dockerhub Password/Token             |
+| `IMAGE_TAG`          | string          | ${{ github.repository }}:latest        | inputs     | ❎          | Tage for image                       |
+| `PLATFORMS`          | string          | linux/amd64,linux/arm64,linux/arm64/v8 | inputs     | ❎          | Platforms to build for               |
+| `FILE`               | string          | DockerFile                             | inputs     | ❎          | DockerFile to use for building image |
 
 </details>
 
