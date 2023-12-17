@@ -1,0 +1,34 @@
+name: Apprise Notifier
+
+on:
+  workflow_call:
+    secrets:
+      APPRISE_URL:
+        required: true
+        description: 'Apprise URL.'
+      APPRISE_NOTIFICATION_BODY:
+        required: false
+        description: 'Apprise Notification body.'
+      APPRISE_NOTIFICATION_TITLE:
+        required: false
+        description: 'Apprise Notification title.'
+    inputs:
+      APPRISE_ATTACHMENTS:
+        required: false
+        type: string
+        description: 'Attachments to send.'
+
+
+jobs:
+  tg-upload:
+    name: Telegram Upload
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload to Telegram
+        uses: nikhilbadyal/ghaction-apprise@main
+        with:
+          APPRISE_URL: ${{ inputs.APPRISE_URL }}
+          APPRISE_NOTIFICATION_BODY: ${{ inputs.APPRISE_NOTIFICATION_BODY }}
+          APPRISE_NOTIFICATION_TITLE: ${{ inputs.APPRISE_NOTIFICATION_TITLE }}
+          APPRISE_ATTACHMENTS: ${{ inputs.APPRISE_ATTACHMENTS }}
