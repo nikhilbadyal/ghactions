@@ -1,5 +1,8 @@
 name: GitHub Cleaner
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+  GITHUB_REPOSITORY: ${{ secrets.GITHUB_REPOSITORY }}
 on:
   workflow_call:
     secrets:
