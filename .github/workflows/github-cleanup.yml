@@ -16,13 +16,39 @@ on:
         type: string
 jobs:
   release-cleanup:
-    uses: ./.github/workflows/github-release-tag-cleaner.yml
-    with:
-      RELEASE_CLEANUP_PATTERN: ${{ inputs.RELEASE_CLEANUP_PATTERN }}
-    secrets:
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+    name: GitHub Cleanup
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete Older Releases
+        uses: nikhilbadyal/ghaction-rm-releases@v0.0.5
+        with:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          RELEASE_PATTERN: ${{ inputs.RELEASE_CLEANUP_PATTERN }}
+  #https://github.com/orgs/community/discussions/8488
   workflow-cleanup:
-    uses: ./.github/workflows/github-workflow-cleaner.yml
-    secrets:
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}
-      GITHUB_REPOSITORY: ${{ inputs.GITHUB_REPOSITORY }}
+    name: RM Workflows
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cleanup
+        run: |
+          workflow_ids=($(gh api repos/"$GITHUB_REPOSITORY"/actions/workflows | jq '.workflows[] | .id'))
+          for workflow_id in "${workflow_ids[@]}"
+          do
+            echo "Listing runs for the workflow ID $workflow_id"
+            run_ids=($(gh api repos/"$GITHUB_REPOSITORY"/actions/workflows/"$workflow_id"/runs?status=completed --paginate | jq '.workflow_runs[].id'))
+            for run_id in "${run_ids[@]}"
+            do
+              echo "Deleting Run ID $run_id"
+              gh api repos/"$GITHUB_REPOSITORY"/actions/runs/"$run_id" -X DELETE >/dev/null
+            done
+          done
+          echo "Deleting orphan workflows"
+          run_ids=($(gh api repos/"$GITHUB_REPOSITORY"/actions/runs?status=completed --paginate | jq '.workflow_runs[].id'))
+          for run_id in "${run_ids[@]}"
+          do
+            echo "Deleting Run ID $run_id"
+            gh api repos/"$GITHUB_REPOSITORY"/actions/runs/"$run_id" -X DELETE >/dev/null
+          done
+  

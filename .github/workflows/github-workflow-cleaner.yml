@@ -12,7 +12,7 @@ on:
         required: true
 
 jobs:
-  tg-upload:
+  workflow-cleanup:
     name: RM Workflows
     timeout-minutes: 30
     runs-on: ubuntu-latest
@@ -37,5 +37,3 @@ jobs:
             echo "Deleting Run ID $run_id"
             gh api repos/"$GITHUB_REPOSITORY"/actions/runs/"$run_id" -X DELETE >/dev/null
           done
-          
-          
