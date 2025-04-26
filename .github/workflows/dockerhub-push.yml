@@ -40,14 +40,14 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push
-        uses: docker/build-push-action@v6.15.0
+        uses: docker/build-push-action@v6.16.0
         with:
           push: true
           platforms: ${{ inputs.PLATFORMS }}
           tags: ${{ inputs.IMAGE_TAG }}
           file: ${{ inputs.FILE }}
       - name: Update repo description
-        uses: peter-evans/dockerhub-description@v4.0.0
+        uses: peter-evans/dockerhub-description@v4.0.2
         if: inputs.PUSH_DESCRIPTION
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
