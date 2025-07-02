@@ -3,6 +3,7 @@ dotenv.config();
 
 import { Octokit } from "octokit";
 import { createAppAuth } from "@octokit/auth-app";
+import { throttling } from "@octokit/plugin-throttling";
 import pLimit from "p-limit";
 
 // --- Configuration ---
@@ -14,6 +15,9 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY_BASE64
   : undefined;
 const DRY_RUN = process.env.DRY_RUN === "true";
 const CONCURRENCY = parseInt(process.env.CONCURRENCY || "5", 10);
+
+// --- Octokit with Throttling ---
+const ThrottledOctokit = Octokit.plugin(throttling);
 
 /**
  * Checks if all required environment variables are set.
@@ -28,12 +32,17 @@ function checkEnv() {
 
 /**
  * Creates an Octokit instance authenticated for the app installation.
+ * This instance will automatically handle rate limiting.
  * @returns {Promise<Octokit>} An authenticated Octokit instance.
  */
 async function createInstallationOctokit() {
+  // Authenticate as the app to find the installation
   const appOctokit = new Octokit({
     authStrategy: createAppAuth,
-    auth: { appId: APP_ID, privateKey: PRIVATE_KEY },
+    auth: {
+      appId: APP_ID,
+      privateKey: PRIVATE_KEY,
+    },
   });
 
   const { data: installations } = await appOctokit.request("GET /app/installations");
@@ -45,14 +54,32 @@ async function createInstallationOctokit() {
     throw new Error(`No installation found for owner '${OWNER}'`);
   }
 
-  const auth = createAppAuth({
-    appId: APP_ID,
-    privateKey: PRIVATE_KEY,
-    installationId: installation.id,
+  // Create a throttled Octokit instance authenticated as the installation
+  return new ThrottledOctokit({
+    authStrategy: createAppAuth,
+    auth: {
+      appId: APP_ID,
+      privateKey: PRIVATE_KEY,
+      installationId: installation.id,
+    },
+    throttle: {
+      onRateLimit: (retryAfter, options, octokit, retryCount) => {
+        octokit.log.warn(
+          `Request quota exhausted for request ${options.method} ${options.url}`
+        );
+        if (retryCount < 1) {
+          octokit.log.info(`Retrying after ${retryAfter} seconds!`);
+          return true;
+        }
+      },
+      onSecondaryRateLimit: (retryAfter, options, octokit) => {
+        octokit.log.warn(
+          `Secondary rate limit hit for ${options.method} ${options.url}`
+        );
+        return true; // Retry the request
+      },
+    },
   });
-
-  const { token } = await auth({ type: "installation" });
-  return new Octokit({ auth: token });
 }
 
 /**
@@ -78,7 +105,6 @@ async function fetchOldWorkflowRuns(octokit, repo, cutoffDate) {
     owner: OWNER,
     repo: repo.name,
     per_page: 100,
-    // Filter runs created before the cutoff date.
     created: `<${cutoffDate.toISOString()}`,
   });
 }
@@ -88,14 +114,15 @@ async function fetchOldWorkflowRuns(octokit, repo, cutoffDate) {
  * @param {Octokit} octokit - The authenticated Octokit instance.
  * @param {object} repo - The repository object.
  * @param {object[]} runsToDelete - The list of workflow runs to delete.
+ * @returns {Promise<number>} The number of successfully deleted runs.
  */
 async function deleteRuns(octokit, repo, runsToDelete) {
   if (runsToDelete.length === 0) {
-    console.log(`No old runs to delete in ${repo.name}.`);
-    return;
+    return 0;
   }
 
-  console.log(`Found ${runsToDelete.length} old runs in ${repo.name}.`);
+  console.log(`Found ${runsToDelete.length} old runs to delete in ${repo.name}.`);
+  let deletedCount = 0;
 
   for (const run of runsToDelete) {
     try {
@@ -114,12 +141,14 @@ async function deleteRuns(octokit, repo, runsToDelete) {
         );
         console.log(`Deleted run ${run.id} from ${repo.name}`);
       }
+      deletedCount++;
     } catch (err) {
       console.error(
         `Failed to delete run ${run.id} in ${repo.name}: ${err.message}`
       );
     }
   }
+  return deletedCount;
 }
 
 /**
@@ -135,18 +164,19 @@ export const handler = async () => {
   const octokit = await createInstallationOctokit();
   const repos = await fetchAllRepos(octokit);
   const cutoffDate = new Date(Date.now() - DAYS_OLD * 86400000);
+  console.log(`Found ${repos.length} repositories.`);
   console.log(`Purging workflow runs older than ${cutoffDate.toISOString()}`);
 
   const limit = pLimit(CONCURRENCY);
+  let totalDeletedRuns = 0;
 
   const processingPromises = repos.map((repo) =>
     limit(async () => {
       try {
         const oldRuns = await fetchOldWorkflowRuns(octokit, repo, cutoffDate);
-        await deleteRuns(octokit, repo, oldRuns);
+        const deletedCount = await deleteRuns(octokit, repo, oldRuns);
+        totalDeletedRuns += deletedCount;
       } catch (err) {
-        // Check for 404 Not Found, which can happen if the repo was deleted
-        // during the script run or if Actions are disabled.
         if (err.status === 404) {
           console.warn(`Skipping repo ${repo.name}: Not found or Actions disabled.`);
         } else {
@@ -158,7 +188,9 @@ export const handler = async () => {
 
   await Promise.all(processingPromises);
 
-  console.log("Cleanup complete!");
+  console.log("--- Cleanup Complete ---");
+  console.log(`Processed ${repos.length} repositories.`);
+  console.log(`Total workflow runs deleted: ${totalDeletedRuns}`);
   return "Success!";
 };
 
@@ -169,3 +201,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     process.exit(1);
   });
 }
+
