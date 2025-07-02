@@ -99,10 +99,10 @@ export const handler = async () => {
     return "Success!";
 };
 
-// For local testing
-if (process.env.LOCAL_RUN === "true") {
-    handler().catch((err) => {
-        console.error(err);
-        process.exit(1);
-    });
+// Run the handler when executed directly (not when imported as a module)
+if (import.meta.url === `file://${process.argv[1]}`) {
+  handler().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
 }
