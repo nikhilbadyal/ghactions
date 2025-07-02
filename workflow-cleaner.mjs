@@ -114,21 +114,22 @@ async function fetchOldWorkflowRuns(octokit, repo, cutoffDate) {
  * @param {Octokit} octokit - The authenticated Octokit instance.
  * @param {object} repo - The repository object.
  * @param {object[]} runsToDelete - The list of workflow runs to delete.
+ * @param {string} repoIdentifier - The identifier to use for the repository in logs.
  * @returns {Promise<number>} The number of successfully deleted runs.
  */
-async function deleteRuns(octokit, repo, runsToDelete) {
+async function deleteRuns(octokit, repo, runsToDelete, repoIdentifier) {
   if (runsToDelete.length === 0) {
     return 0;
   }
 
-  console.log(`Found ${runsToDelete.length} old runs to delete in ${repo.name}.`);
+  console.log(`Found ${runsToDelete.length} old runs to delete in ${repoIdentifier}.`);
   let deletedCount = 0;
 
   for (const run of runsToDelete) {
     try {
       if (DRY_RUN) {
         console.log(
-          `[DRY RUN] Would delete run ${run.id} from ${repo.name} (created at ${run.created_at})`
+          `[DRY RUN] Would delete run ${run.id} from ${repoIdentifier} (created at ${run.created_at})`
         );
       } else {
         await octokit.request(
@@ -139,12 +140,12 @@ async function deleteRuns(octokit, repo, runsToDelete) {
             run_id: run.id,
           }
         );
-        console.log(`Deleted run ${run.id} from ${repo.name}`);
+        console.log(`Deleted run ${run.id} from ${repoIdentifier}`);
       }
       deletedCount++;
     } catch (err) {
       console.error(
-        `Failed to delete run ${run.id} in ${repo.name}: ${err.message}`
+        `Failed to delete run ${run.id} in ${repoIdentifier}: ${err.message}`
       );
     }
   }
@@ -172,15 +173,16 @@ export const handler = async () => {
 
   const processingPromises = repos.map((repo) =>
     limit(async () => {
+      const repoIdentifier = repo.private ? `private-repo` : repo.html_url;
       try {
         const oldRuns = await fetchOldWorkflowRuns(octokit, repo, cutoffDate);
-        const deletedCount = await deleteRuns(octokit, repo, oldRuns);
+        const deletedCount = await deleteRuns(octokit, repo, oldRuns, repoIdentifier);
         totalDeletedRuns += deletedCount;
       } catch (err) {
         if (err.status === 404) {
-          console.warn(`Skipping repo ${repo.name}: Not found or Actions disabled.`);
+          console.warn(`Skipping repo ${repoIdentifier}: Not found or Actions disabled.`);
         } else {
-          console.error(`Error processing repo ${repo.name}: ${err.message}`);
+          console.error(`Error processing repo ${repoIdentifier}: ${err.message}`);
         }
       }
     })
