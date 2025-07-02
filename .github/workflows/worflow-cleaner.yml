@@ -24,6 +24,6 @@ jobs:
           APP_ID: ${{ secrets.APP_ID }}
           PRIVATE_KEY_BASE64: ${{ secrets.PRIVATE_KEY_BASE64 }}
           OWNER: ${{ secrets.OWNER }}
-          DAYS_OLD: 30
-          DRY_RUN: true
-        run: node index.mjs
+          DAYS_OLD:  ${{ secrets.DAYS_OLD }}
+          DRY_RUN: ${{ secrets.DRY_RUN }}
+        run: node workflow-cleaner.mjs
