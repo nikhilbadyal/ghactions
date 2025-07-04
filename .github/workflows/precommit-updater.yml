@@ -1,0 +1,37 @@
+name: Org-wide pre-commit updater (via GitHub App)
+
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs every day at midnight
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  update-pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4.4.0
+        with:
+          node-version: 'latest'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5.6.0
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          pip3 install pre-commit
+          npm install
+
+      - name: Run pre-commit updater
+        env:
+          PRE_COMMIT_UPDATER_APP_ID: ${{ secrets.PRE_COMMIT_UPDATER_APP_ID }}
+          PRE_COMMIT_UPDATER_APP_UID: ${{ secrets.PRE_COMMIT_UPDATER_APP_UID }}
+          PRE_COMMIT_UPDATER_OWNER: ${{ secrets.PRE_COMMIT_UPDATER_OWNER }}
+          PRE_COMMIT_UPDATER_PRIVATE_KEY_BASE64: ${{ secrets.PRE_COMMIT_UPDATER_PRIVATE_KEY_BASE64 }}
+        run: node precommit-updater.mjs
