@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Delete Older Releases
-        uses: nikhilbadyal/ghaction-rm-releases@dd944d88262e0ca5e68c8fed16e2d581103ef6d6 # v0.7.0
+        uses: nikhilbadyal/ghaction-rm-releases@0a58d2ce5d2bf162d18e6c01712cc0e53b2bab45 # v0.8.0
         with:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           RELEASE_PATTERN: ${{ inputs.RELEASE_CLEANUP_PATTERN }}
